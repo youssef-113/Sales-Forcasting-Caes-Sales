@@ -3,13 +3,8 @@
 ## Project Overview
 This project aims to build a robust forecasting model that helps businesses predict future car sales trends. The project is divided into four milestones, each focusing on a different aspect of the data science pipeline.
 
-## Team Members
-- Ahmed Gamal
-- Begad
-- Youssef Bassiouny
-- Mostafa Nasser
-- Mohammed Amr
-
+## Member
+- Youssef Bassiony 
 ## Project Structure
 ```
 ├── Milestone1/                    # Data Collection and Cleaning
@@ -30,20 +25,17 @@ This project aims to build a robust forecasting model that helps businesses pred
 │   └── Forecasting Model Performance Report.docx
 │
 └── Milestone4/                    # Deployment
-    ├── deployment/
-    │   ├── backend/              # FastAPI backend
-    │   │   ├── main.py
-    │   │   ├── config.py
+    ├── dep/
+    │   ├── main/              
+    │   │   ├── Forcasting.py
     │   │   ├── models/
-    │   │   ├── services/
-    │   │   └── routers/
-    │   ├── frontend/            # Streamlit frontend
-    │   │   ├── app.py
-    │   │   ├── config.py
-    │   │   ├── components/
-    │   │   └── services/
-    │   └── requirements.txt
-    └── Deployments.ipynb
+    │   │   ├── Data/
+    │   │   └── Pages/
+    │   |   └── requirements.txt
+    └── MlFlow/
+    │   ├── Data/
+    │   ├──Models/
+    │   ├──models Graphs/ 
 ```
 
 ## Milestones
@@ -77,16 +69,12 @@ This project aims to build a robust forecasting model that helps businesses pred
 - Selected Random Forest as the best performing model
 
 ### Milestone 4: Deployment
-- Created a FastAPI backend with:
-  - Model prediction endpoint
-  - Input validation
-  - Error handling
-  - API documentation
 - Developed a Streamlit frontend with:
   - User-friendly interface
   - Real-time predictions
   - Visual feedback
   - Error handling
+-Mlflow 
 
 ## Features
 - Car price prediction based on multiple features
@@ -98,7 +86,6 @@ This project aims to build a robust forecasting model that helps businesses pred
 
 ## Technologies Used
 - Python
-- FastAPI
 - Streamlit
 - Pandas
 - NumPy
@@ -141,9 +128,6 @@ streamlit run app.py
 Once the backend is running, access the API documentation at:
 - Swagger UI: http://localhost:8000/docs
 - ReDoc: http://localhost:8000/redoc
-
-## Frontend
-The web interface is available at: http://localhost:8501
 
 ## Contributing
 Contributions are welcome! Please feel free to submit a Pull Request.
