@@ -82,7 +82,6 @@ This project aims to build a robust forecasting model that helps businesses pred
 - Real-time predictions
 - Comprehensive data analysis
 - Model performance monitoring
-- API documentation
 
 ## Technologies Used
 - Python
@@ -124,10 +123,7 @@ cd Milestone4/deployment/frontend
 streamlit run app.py
 ```
 
-## API Documentation
-Once the backend is running, access the API documentation at:
-- Swagger UI: http://localhost:8000/docs
-- ReDoc: http://localhost:8000/redoc
+
 
 ## Contributing
 Contributions are welcome! Please feel free to submit a Pull Request.
