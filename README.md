@@ -96,6 +96,13 @@ This project aims to build a robust forecasting model that helps businesses pred
 
 ## Setup and Installation
 
+Alternatively, you can use the `setup.sh` script (on Linux/macOS or Git Bash on Windows) to create the virtual environment and install dependencies:
+```bash
+chmod +x setup.sh       # Make sure it's executable
+./setup.sh
+```
+After running the script, you still need to activate the virtual environment as prompted by the script.
+
 1. Clone the repository:
 ```bash
 git clone [repository-url]
@@ -107,21 +114,40 @@ python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
-3. Install dependencies:
-```bash
-pip install -r Milestone4/deployment/requirements.txt
-```
+3. Install dependencies from the root directory:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-4. Run the application:
-```bash
-# Start the backend
-cd Milestone4/deployment/backend
-python main.py
+4. Run the Streamlit application:
+   Navigate to the Streamlit app directory and run the app.
+   ```bash
+   cd Milestone4/dep/main
+   streamlit run Forcasting.py
+   ```
 
-# Start the frontend (in a new terminal)
-cd Milestone4/deployment/frontend
-streamlit run app.py
-```
+5. Run MLflow experiments:
+   Navigate to the MLflow directory and run your MLflow Python scripts (e.g., `train.py`, `predict.py`).
+   For example, to run the training script (e.g., `train.py`):
+   ```bash
+   cd Milestone4/MLFLOW
+   # Option 1: If you have an MLproject file
+   mlflow run .
+   # Option 2: Directly run the Python script
+   # python train.py
+   ```
+   For running prediction scripts (e.g., `predict_arima.py` or `predict.py`):
+   ```bash
+   # Example for predict_arima.py:
+   python predict_arima.py --model_path "path/to/your/arima_model" --steps 10
+   # Example for predict.py (if it takes similar arguments):
+   # python predict.py --model_path "path/to/your/model.pkl" --input_data "path/to/your/input_data.csv"
+   ```
+   To view the MLflow UI, run:
+   ```bash
+   mlflow ui
+   ```
+   Then open your browser to `http://localhost:5000`.
 
 
 
