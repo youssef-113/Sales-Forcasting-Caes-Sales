@@ -14,7 +14,7 @@ from pathlib import Path
 # determine project “main” folder regardless of CWD
 BASE_DIR = Path(__file__).resolve().parents[1]      # …/main
 DATA_PATH = BASE_DIR / "Data" / "Car_sales_Cleand.csv"
-#DATA_PATH = "../Data/Car_sales_Cleand.csv"
+MODELS_DIR = BASE_DIR / "Models"
 
 st.set_page_config(page_title="Retrain Forecast Models", layout="wide")
 st.title("🔄 Retrain Forecast Models")
@@ -48,7 +48,7 @@ if uploaded_file:
         prophet_df = full_df.rename(columns={"Date": "ds", "Price ($)": "y"})
         prophet_model = Prophet()
         prophet_model.fit(prophet_df)
-        joblib.dump(prophet_model, "../Models/prophet_model.pkl")
+        joblib.dump(prophet_model, MODELS_DIR / "prophet_model.pkl")
         st.success("✅ Prophet retrained and saved.")
 
         # --- Retrain XGBoost ---
@@ -63,7 +63,7 @@ if uploaded_file:
         features = ["year", "month", "day", "dow"] + [f"lag_{i}" for i in range(1, 8)]
         xgb_model = XGBRegressor(n_estimators=100, learning_rate=0.1, max_depth=5, random_state=42)
         xgb_model.fit(xgb_df[features], xgb_df["Price ($)"])
-        joblib.dump(xgb_model, "../Models/xgb_forcasting_model.pkl")
+        joblib.dump(xgb_model, MODELS_DIR / "xgb_forcasting_model.pkl")
         st.success("✅ XGBoost retrained and saved.")
 
    

@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 import joblib
 import pandas as pd
 import numpy as np
@@ -7,7 +8,12 @@ import plotly.graph_objects as go
 from prophet import Prophet
 from xgboost import XGBRegressor
 from sklearn.metrics import mean_squared_error
-#from pmdarima import auto_arima
+from pmdarima import auto_arima
+
+# determine project "main" folder regardless of CWD
+BASE_DIR = Path(__file__).resolve().parent
+DATA_PATH = BASE_DIR / "Data" / "Car_sales_Cleand.csv"
+MODELS_DIR = BASE_DIR / "Models"
 
 # --- Configuration ---
 st.set_page_config(page_title="Car Price Forecasting", page_icon="📈", layout="wide")
@@ -15,19 +21,34 @@ st.title("🚗 Car Price Forecasting 🚗")
 
 # --- Caching utilities ---
 @st.cache_data
-def load_data(path: str = "./Data/Car_sales_Cleand.csv") -> pd.DataFrame:
-    df = pd.read_csv(path, parse_dates=["Date"] )
+def load_data(path = None) -> pd.DataFrame:
+    if path is None:
+        target_path = DATA_PATH
+    else:
+        target_path = Path(path)
+        if not target_path.exists():
+            if (BASE_DIR / target_path).exists():
+                target_path = BASE_DIR / target_path
+            elif DATA_PATH.exists():
+                target_path = DATA_PATH
+    df = pd.read_csv(target_path, parse_dates=["Date"])
     # aggregate duplicates by date
     df = df.groupby("Date")["Price ($)"].mean().reset_index()
     df = df.sort_values("Date").reset_index(drop=True)
     return df
 
 @st.cache_resource
-def load_model(filename: str) -> any:
-    if not os.path.exists(filename):
-        st.error(f"Model file not found: {filename}")
-        st.stop()
-    return joblib.load(filename)
+def load_model(filename) -> any:
+    path = Path(filename)
+    if not path.exists():
+        if (BASE_DIR / path).exists():
+            path = BASE_DIR / path
+        elif (MODELS_DIR / path.name).exists():
+            path = MODELS_DIR / path.name
+        else:
+            st.error(f"Model file not found: {filename}")
+            st.stop()
+    return joblib.load(path)
 
 # --- Forecasting Functions ---
 def prophet_forecast(model, periods: int) -> pd.DataFrame:
@@ -69,10 +90,10 @@ def xgb_forecast(df: pd.DataFrame, periods: int) -> pd.DataFrame:
     return pd.DataFrame({"ds":dates, "yhat":preds})
 
 
-#def stat_forecast(model, df: pd.DataFrame, periods: int) -> pd.DataFrame:
+def stat_forecast(model, df: pd.DataFrame, periods: int) -> pd.DataFrame:
     # prepare daily series with no duplicates
     series = df.groupby("Date")["Price ($)"].mean()
-    series = series.asfreq("D").fillna(method="ffill")
+    series = series.asfreq("D").ffill()
 
     # attempt forecast with existing model
     try:
@@ -111,17 +132,17 @@ def main():
     periods = st.sidebar.slider("Days to forecast", 7, 60, 30)
 
     # load models
-    prophet_model = load_model("./Models/prophet_model.pkl")
-    xgb_model = load_model("./Models/xgb_forcasting_model.pkl") if model_choice=="XGBoost" else None
-    arima_model = load_model("./Models/arima_model.pkl") if model_choice in ["ARIMA"] else None
+    prophet_model = load_model(MODELS_DIR / "prophet_model.pkl") if model_choice == "Prophet" else None
+    xgb_model = load_model(MODELS_DIR / "xgb_forcasting_model.pkl") if model_choice == "XGBoost" else None
+    arima_model = load_model(MODELS_DIR / "arima_model.pkl") if model_choice in ["ARIMA"] else None
 
     # compute forecast
-    if model_choice=="Prophet":
+    if model_choice == "Prophet":
         forecast_df = prophet_forecast(prophet_model, periods)
-    elif model_choice=="XGBoost":
+    elif model_choice == "XGBoost":
         forecast_df = xgb_forecast(df, periods)
-    #else:
-      #  forecast_df = stat_forecast(arima_model, df, periods)
+    else:
+        forecast_df = stat_forecast(arima_model, df, periods)
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=forecast_df['ds'], y=forecast_df['yhat'], mode='lines+markers', name=f'{model_choice} Forecast'))
     fig.update_layout(title=f"{model_choice} Price Forecast for Next {periods} Days", xaxis_title="Date", yaxis_title="Price ($)", template="plotly_white")
